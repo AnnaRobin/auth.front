@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XHR Login Example</title>
+</head>
+<body>
+    <h1>Oauth2/JWT Examples</h1>
+    <h2>Login</h2>
+    <form id="LoginForm">
+        <input type="hidden" name="client_id" value="my-client-app" id="clientID">
+
+        <input type="hidden" name="grant_type" value="password" id="grantType">
+        <div>
+            <label for="username">Username : </label><input value="" id="username" name="username" type="text" size="20" required="required">
+            <br/>    <br/>
+            <label for="password">Password :  </label><input value="" id="password" name="password" type="password" size="20" required="required">
+            <br/>     <br/>
+        </div>
+        <div>
+            <button id="LoginButton" type="submit">Login now!</button>
+        </div>
+    </form>
+   <!-- Scripts -->
+   <script type="text/javascript">
+   const accessToken = document.querySelector('#accessToken');
+   // Authentication:
+    const loginForm = document.querySelector('#LoginForm');
+    loginForm.addEventListener('submit',
+        function(event){
+            event.preventDefault();
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = 'json';
+            xhr.onload = function() {
+                const code = xhr.status;
+                if (code == 200) {
+                    accessToken.value = xhr.response.access_token; //read JSON object
+                }
+                else if (code == 400) {
+                    alert ('400 Bad request: ' + xhr.response.error);
+                }
+                else {
+                    alert('Other error, status code: ' + code);
+                }
+            }
+            xhr.onerror = function() {
+                alert('XHR error');
+            }
+
+            xhr.open('POST', 'http://localhost:9090/oauth/token');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            let data = "username=" + document.querySelector('#username').value;
+            data += "&password" + document.querySelector('#password').value;
+            data += "&client_id" + document.querySelector('#clientID').value;
+            data += "&grant_type" + document.querySelector('#grantType').value;
+
+            xhr.send(data);
+
+        }, false);
+
+
+   </script>
+</body>
+
+
+</html>
